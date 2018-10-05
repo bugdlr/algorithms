@@ -16,21 +16,28 @@ function checkCashRegister(price, cash, cid) {
     return accumulator + currentValue[1];
   }, 0);
 
+   if (change == count) {
+    response.status = "CLOSED";
+    response.change = cid.forEach(el => el[1] = (el[1] / 100));
+  }
+
   // response if cid is less than change due
-  for (let i = cid.length - 1; i > -1; i--) {
-    let changeGiven = 0;
-    // let newcid = cid.slice();
-    while (cid[i][1] > 0 && change >= currency[i]) {
-      change -= currency[i];
-      count -= currency[i];
-      // newcid[i][1] -= currency[i];
-      changeGiven += currency[i] / 100;
-      response.status = "OPEN";
+  if (change !==count) {
+    for (let i = cid.length - 1; i > -1; i--) {
+      let changeGiven = 0;
+      let newcid = [...cid];
+      while (cid[i][1] > 0 && change >= currency[i]) {
+        change -= currency[i];
+        count -= currency[i];
+        newcid[i][1] -= currency[i];
+        changeGiven += currency[i] / 100;
+        response.status = "OPEN";
+      }
+      if (changeGiven)
+        changeArray.push([cid[i][0], changeGiven]);
+        changeArray.forEach(el => el[1] = Number((el[1]).toFixed(2)));
+        response.change = changeArray;
     }
-    if (changeGiven)
-      changeArray.push([cid[i][0], changeGiven]);
-      changeArray.forEach(el => el[1] = Number((el[1]).toFixed(2)));
-      response.change = changeArray;
   }
 
   if (change > 0) {
@@ -38,20 +45,16 @@ function checkCashRegister(price, cash, cid) {
       response.change = [];
   }
 
-
-
   if (change == count) {
     response.status = "CLOSED";
     response.change = cid;
+
   }
 
   console.log(response.status);
   console.log(change);
   console.log(count + "count");
-  console.log(cid);
-
-// original cid
-
+  console.log(response.change);
 
 
   // Here is your change, ma'am.
